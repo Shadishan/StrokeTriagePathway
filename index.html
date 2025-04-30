@@ -208,6 +208,12 @@
   color: #f97316;
 }
 
+.tier-separator {
+  border: none;
+  border-top: 1px solid var(--gray-300);
+  margin: 0.8rem 0;
+}
+    
 </style>
 </head>
 <body>
@@ -251,8 +257,14 @@
     <h4>Tiered Stroke Response</h4>
     <strong style="color:#ba0c2f;">Tier 1 (Red)</strong>
     <p>Suspected LVO <6 h. Activate full stroke team immediately.</p>
+    
+    <hr class="tier-separator">
+
     <strong style="color:#f97316;">Tier 2 (Orange)</strong>
     <p>Moderate/minor deficits <24 h or NIHSS screening.</p>
+
+    <hr class="tier-separator">
+    
     <strong style="color:#64748b;">Tier 3 (Grey)</strong>
     <p>ED provider sees patient ASAP.</p>
     <p>Neurology Resident responds to bedside within 45 minutes.</p>
