@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UNM Outpatient Stroke Alert – Decision Tool</title>
+  <!-- ===== COLOR PALETTE ===== -->
+  <style>
+    :root{
+      --unm-red: #ba0c2f;
+      --unm-teal: #00707c;
+      --gray-100: #f9fbff;
+      --gray-300: #e2e8f0;
+      --gray-600: #475569;
+      --white: #ffffff;
+    }
+    *,*::before,*::after { box-sizing: border-box; }
+    html,body { margin:0; padding:0; min-height:100vh;
+      background: var(--gray-100); color: var(--gray-600);
+      font-family: Arial,Helvetica,sans-serif; scroll-behavior: smooth; }
+    a { color: var(--unm-red); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    h1,h2,h3 { margin: 0; font-weight: 700; }
+
+    /* Top nav */
+    header{ position: sticky; top:0; z-index: 40;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--white); padding:.6rem 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    header img{ height: 46px; }
+    nav{ display: flex; gap: 1rem; align-items: center; }
+    nav a, nav button { text-decoration:none; border:none; background:none;
+      font-weight:600; color: var(--unm-teal); cursor:pointer;
+      padding:.25rem .4rem; border-radius:4px; }
+    nav a:hover, nav button:hover { background: var(--gray-300); }
+
+    /* Wizard */
+    #wizard{ max-width: 900px; margin:3rem auto; padding:1.5rem;
+      background: var(--white); box-shadow: 0 6px 18px rgba(0,0,0,.08);
+      border-radius:12px; }
+    #wizard h1{ color: var(--unm-red); text-align:center; margin-bottom:1rem; }
+    .step-question{ font-size:1.3rem; font-weight:700;
+      margin:1.8rem 0 .8rem; color: var(--unm-teal);
+      text-align:center; }
+    .options{ display:flex; flex-wrap:wrap; justify-content:center;
+      gap:1rem; margin-bottom:1.4rem; }
+    .options button{ flex:1 1 260px; max-width:280px;
+      padding:1rem; font-size:1rem; font-weight:600;
+      border-radius:10px; border:none; cursor:pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,.05); }
+    .primary{ background: var(--unm-red); color:#fff; }
+    .neutral{ background: var(--gray-600); color:#fff; }
+
+    /* Result card */
+    .result{ border:4px solid var(--gray-300);
+      border-radius:12px; padding:1.5rem; margin-top:1.5rem;
+      text-align:center; }
+    .tier1{ border-color: var(--unm-red); }
+    .tier2{ border-color: #f97316; }
+    .tier3{ border-color: #64748b; }
+    .info{ border-color: var(--gray-300); }
+    .badge{ display:inline-block; font-size:.8rem;
+      padding:.2rem .55rem; border-radius:4px; color:#fff;
+      font-weight:700; margin-bottom:.75rem; }
+    .tier1 .badge{ background: var(--unm-red); }
+    .tier2 .badge{ background: #f97316; }
+    .tier3 .badge{ background: #64748b; }
+    .info .badge{ background: var(--gray-600); }
+    .call-box{ margin-top:1rem; font-size:1.1rem;
+      line-height:1.45; padding:0; }
+    .call-box p{ margin:.5rem 0; }
+
+    /* Floating tier box */
+    #tierBox{ position:fixed; bottom:1rem; right:1rem;
+      width:300px; background:#fff; border-radius:10px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+      padding:1rem 1.25rem; font-size:.9rem; line-height:1.5;
+      z-index:50; display:none; }
+    #tierBox h4{ margin:.2rem 0 .8rem;font-size:1rem;
+      color: var(--unm-teal); text-align:center; }
+    #tierBox strong{ display:block; margin:0.6rem 0 0.2rem; }
+    #tierBox p{ margin:0 0 .8rem; }
+    #tierBox button.close-tier{ position:absolute; top:6px; right:8px;
+      border:none; background:transparent; font-size:1rem;
+      cursor:pointer; color: var(--gray-600); }
+
+    /* Contacts section */
+    #contacts{ max-width:900px; margin:2rem auto;
+      padding:0 1.5rem; background: var(--white);
+      box-shadow:0 4px 10px rgba(0,0,0,.08);
+      border-radius:12px; padding:1.5rem 1.5rem; }
+    #contacts h2{ color: var(--unm-red); text-align:center;
+      margin-bottom:1rem; }
+    .phone{ margin:.35rem 0; font-size:1rem; }
+
+    /* BE FAST modal */
+
+@media (max-width: 640px) {
+  nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-top: 0.5rem;
+  }
+  nav a, nav button {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .options button {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+  }
+  header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  header img {
+    max-width: 100%;
+    height: auto;
+  }
+  #tierBox {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 1rem;
+  }
+  .step-question {
+    font-size: 1.2rem;
+  }
+  .result h2 {
+    font-size: 1.4rem;
+  }
+}
+
+    dialog#befast{ border:none; border-radius:12px;
+      padding:0; max-width:650px; width:95%; }
+    dialog::backdrop{ background:rgba(0,0,0,.55); }
+    #befast header{ background:var(--unm-teal);
+      color:#fff; padding:.6rem 1rem;
+      border-radius:12px 12px 0 0;
+      display:flex; justify-content:space-between;
+      align-items:center; }
+    #befast img{ width:100%; display:block; }
+
+    @media(max-width:640px){
+      .options button{ flex:1 1 100%; }
+      header img{ height:40px; }
+      #tierBox{ width:90%; right:5%; }
+      #contacts{ margin:1.5rem auto; }
+    }
+  
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: var(--unm-teal);
+  cursor: pointer;
+  padding: .25rem .4rem;
+  border-radius: 4px;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--white);
+  min-width: 180px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1;
+  right: 0;
+  border-radius: 6px;
+}
+
+.dropdown-content a {
+  color: var(--gray-600);
+  padding: 0.6rem 1rem;
+  display: block;
+  text-align: left;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--gray-300);
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+</style>
+</head>
+<body>
+  <!-- Top Navigation -->
+  <header>
+    <img src="images/unm_hsc_logo.png" alt="UNM HSC logo" />
+    <nav>
+
+<div class="dropdown">
+ <button onclick="toggleTierBox()">Tiered Response</button>
+      <button onclick="document.getElementById('befast').showModal()">BE FAST</button>
+  <button class="dropbtn">Clinical Tools ▼</button>
+  <div class="dropdown-content">
+    <a href="https://shadishan.github.io/StrokeCalculators/" target="_blank">NIHSS + mRS Calculators</a>
+    <a href="files/Outpatient_Stroke_Alert_Protocol.pdf" target="_blank">Download Protocol (PDF)</a>
+  </div>
+</div>
+
+           
+    </nav>
+  </header>
+
+  <!-- Decision Wizard -->
+  <section id="wizard">
+    <h1>Outpatient Stroke Alert Decision Tool</h1>
+    <div id="wizard-body"></div>
+  </section>
+
+  <!-- Contacts -->
+  <section id="contacts">
+    <h2>Key Contact Numbers</h2>
+    <p class="phone"><strong>Stroke Team Pager (24/7):</strong> <a href="tel:+15052723333">505‑272‑3333</a></p>
+    <p class="phone"><strong>UNMH ED Transfer Center:</strong> <a href="tel:+15052723333">505‑272‑3333</a></p>
+    <p class="phone"><strong>Radiology CT Suite:</strong> <a href="tel:+15052723333">505‑272‑3333</a></p>
+    <p class="phone"><strong>Neurosurgery On‑Call:</strong> <a href="tel:+15052723333">505‑272‑3333</a></p>
+  </section>
+
+  <!-- Floating Tier Box -->
+  <div id="tierBox">
+    <button class="close-tier" onclick="toggleTierBox()">✕</button>
+    <h4>Tiered Stroke Response</h4>
+    <strong style="color:#ba0c2f;">Tier 1 (Red)</strong>
+    <p>Suspected LVO <6 h. Activate full stroke team immediately.</p>
+    <strong style="color:#f97316;">Tier 2 (Orange)</strong>
+    <p>Moderate/minor deficits <24 h or NIHSS screening.</p>
+    <strong style="color:#64748b;">Tier 3 (Grey)</strong>
+    <p>ED provider sees patient ASAP.</p>
+    <p>Neurology Resident responds to bedside within 45 minutes.</p>
+    <p>Arrange same-day Stroke Clinic referral.</p>
+    <p>Order outpatient MRI with DWI.</p>
+  </div>
+
+  <!-- BE FAST Modal -->
+  <dialog id="befast">
+    <header>
+      <h3>BE FAST – Stroke Warning Signs</h3>
+      <button onclick="document.getElementById('befast').close()">✕</button>
+    </header>
+    <img src="images/befast.png" alt="BE FAST graphic" />
+  </dialog>
+
+  <!-- Footer -->
+  <footer style="text-align:center;padding:.8rem 0;font-size:.75rem;color:var(--gray-600);">
+    © 2025 University of New Mexico Health Sciences Center • Stroke Program
+  </footer>
+
+  <!-- Script: Decision Logic + Toggle -->
+  <script>
+    function toggleTierBox(){
+      const box = document.getElementById('tierBox');
+      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+    }
+
+    const steps = {
+      start: { question: "Has EMS notified or patient meets BE FAST in ED?", options: [
+          { label: "Yes", next: "lkw" },
+          { label: "No", next: "result_noStroke" }
+        ]
+      },
+      lkw: { question: "Last Known Well (LKW)?", options: [
+          { label: "≤ 6 h", next: "lvl0" },
+          { label: "6–24 h", next: "lvl6to24" },
+          { label: "> 24 h", next: "result_tier3" }
+        ]
+      },
+      lvl0: { question: "NIHSS ≥ 6 or cortical signs?", options: [
+          { label: "Yes", next: "result_tier1" },
+          { label: "No", next: "result_tier2" }
+        ]
+      },
+      lvl6to24: { question: "NIHSS ≥ 6?", options: [
+          { label: "Yes", next: "result_tier2" },
+          { label: "No", next: "result_tier2" }
+        ]
+      },
+      result_tier1: { result: { tier: "Tier 1 – Emergent", badge: "Tier 1", desc: "Suspected LVO <6 h. Activate full stroke team immediately.", actions: [
+            "Page Stroke Team pager (505‑272‑3333)",
+            "Order STAT CT/CTA",
+            "Prepare for IV tPA ± endovascular"
+          ]
+        }
+      },
+      result_tier2: { result: { tier: "Tier 2 – Urgent", badge: "Tier 2", desc: "Moderate/minor deficits <24 h or NIHSS screening.", actions: [
+            "Page Stroke Team within 10 min",
+            "Obtain CT/CTA or MRI",
+            "Evaluate for IV tPA/EVT"
+          ]
+        }
+      },
+      result_tier3: { result: { tier: "Tier 3 – Consult", badge: "Tier 3", desc: "", actions: [
+            "ED provider sees patient ASAP",
+            "Neurology Resident responds to bedside within 45 minutes",
+            "Arrange same-day Stroke Clinic referral",
+            "Order outpatient MRI with DWI"
+          ]
+        }
+      },
+      result_noStroke: { result: { tier: "No Stroke Alert", badge: "Info", desc: "Presentation not consistent with acute stroke.", actions: [
+            "Proceed with routine care",
+            "Advise patient on warning signs"
+          ]
+        }
+      }
+    };
+
+    const wizardBody = document.getElementById('wizard-body');
+    function renderStep(id) {
+      const node = steps[id];
+      wizardBody.innerHTML = '';
+      if (node.question) {
+        const q = document.createElement('div'); q.className = 'step-question'; q.textContent = node.question;
+        wizardBody.appendChild(q);
+        const opts = document.createElement('div'); opts.className = 'options';
+        node.options.forEach(o => {
+          const btn = document.createElement('button'); btn.className = 'primary'; btn.textContent = o.label;
+          btn.onclick = () => renderStep(o.next);
+          opts.appendChild(btn);
+        });
+        wizardBody.appendChild(opts);
+      } else {
+        const card = document.createElement('div');
+        const cls = node.result.badge === 'Tier 1' ? 'tier1' : node.result.badge === 'Tier 2' ? 'tier2' : node.result.badge === 'Tier 3' ? 'tier3' : 'info';
+        card.className = 'result ' + cls;
+        const badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = node.result.badge;
+        card.appendChild(badge);
+        const h2 = document.createElement('h2'); h2.textContent = node.result.tier; card.appendChild(h2);
+        if (node.result.desc) {
+          const p = document.createElement('p'); p.textContent = node.result.desc; card.appendChild(p);
+        }
+        const box = document.createElement('div'); box.className = 'call-box';
+        node.result.actions.forEach(a => { const pa = document.createElement('p'); pa.textContent = a; box.appendChild(pa); });
+        card.appendChild(box);
+        const restart = document.createElement('button'); restart.className = 'neutral'; restart.textContent = 'Start Over'; restart.onclick = () => renderStep('start');
+        card.appendChild(restart);
+        wizardBody.appendChild(card);
+      }
+    }
+    renderStep('start');
+
+    if (typeof HTMLDialogElement === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.js"><\/script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dialog-polyfill/0.5.6/dialog-polyfill.min.css">');
+    }
+  </script>
+</body>
+</html>
