@@ -94,6 +94,49 @@
     .phone{ margin:.35rem 0; font-size:1rem; }
 
     /* BE FAST modal */
+
+@media (max-width: 640px) {
+  nav {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    padding-top: 0.5rem;
+  }
+  nav a, nav button {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  .options button {
+    flex: 1 1 100%;
+    max-width: 100%;
+    padding: 1.2rem;
+    font-size: 1.1rem;
+  }
+  header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  header img {
+    max-width: 100%;
+    height: auto;
+  }
+  #tierBox {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+@media (max-width: 480px) {
+  body {
+    font-size: 1rem;
+  }
+  .step-question {
+    font-size: 1.2rem;
+  }
+  .result h2 {
+    font-size: 1.4rem;
+  }
+}
+
     dialog#befast{ border:none; border-radius:12px;
       padding:0; max-width:650px; width:95%; }
     dialog::backdrop{ background:rgba(0,0,0,.55); }
