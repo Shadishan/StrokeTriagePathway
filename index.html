@@ -293,27 +293,32 @@
       result_tier1: { result: { tier: "Tier 1 – Emergent", badge: "Tier 1", desc: "Suspected LVO <6 h. Activate full stroke team immediately.", actions: [
             "Page Stroke Team pager (505‑272‑3333)",
             "Order STAT CT/CTA",
-            "Prepare for IV tPA ± endovascular"
+            "Prepare for IV tPA ± endovascular",
+            "Establish LKW Date/Time (Confirm Last Known Well vs First Seen Sick)",
+            "POC Glucose (treat if <70 and reassess for BEFAST)"
           ]
         }
       },
       result_tier2: { result: { tier: "Tier 2 – Urgent", badge: "Tier 2", desc: "Moderate/minor deficits <24 h or NIHSS screening.", actions: [
             "Page Stroke Team within 10 min",
             "Obtain CT/CTA or MRI",
-            "Evaluate for IV tPA/EVT"
+            "Evaluate for IV tPA/EVT",
+            "Establish LKW Date/Time (Confirm Last Known Well vs First Seen Sick)",
+            "POC Glucose (treat if <70 and reassess for BEFAST)"
           ]
         }
       },
       result_tier3: { result: { tier: "Tier 3 – Consult", badge: "Tier 3", desc: "", actions: [
             "ED provider sees patient ASAP",
             "Neurology Resident responds to bedside within 45 minutes",
-            "Arrange same-day Stroke Clinic referral",
-            "Order outpatient MRI with DWI"
+            "Arrange ASAP Stroke Clinic Referral if Possible",
+            "Consider Outpatient MRI with DWI"
           ]
         }
       },
       result_noStroke: { result: { tier: "No Stroke Alert", badge: "Info", desc: "Presentation not consistent with acute stroke.", actions: [
             "Proceed with routine care",
+            "Check POC Blood Glucose, if <70 treat and reassess for BEFAST",
             "Advise patient on warning signs"
           ]
         }
