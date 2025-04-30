@@ -195,6 +195,19 @@
   display: block;
 }
 
+
+.highlight-desc {
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+.tier1 .highlight-desc {
+  color: var(--unm-red);
+}
+.tier2 .highlight-desc {
+  color: #f97316;
+}
+
 </style>
 </head>
 <body>
@@ -345,7 +358,7 @@
         card.appendChild(badge);
         const h2 = document.createElement('h2'); h2.textContent = node.result.tier; card.appendChild(h2);
         if (node.result.desc) {
-          const p = document.createElement('p'); p.textContent = node.result.desc; card.appendChild(p);
+          const p = document.createElement('p'); p.textContent = node.result.desc; p.className = 'highlight-desc'; card.appendChild(p);
         }
         const box = document.createElement('div'); box.className = 'call-box';
         node.result.actions.forEach(a => { const pa = document.createElement('p'); pa.textContent = a; box.appendChild(pa); });
