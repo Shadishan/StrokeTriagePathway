@@ -1,6 +1,6 @@
 
     const steps = {
-      start: { question: "Has EMS notified or patient meets BE FAST in ED?", options: [
+      start: { question: "Does the patient meet BE FAST criteria?", options: [
           { label: "Yes", next: "lkw" },
           { label: "No", next: "result_noStroke" }
         ]
